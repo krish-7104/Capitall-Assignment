@@ -1,0 +1,1 @@
+export const BaseLink = import.meta.env.API_LINK
