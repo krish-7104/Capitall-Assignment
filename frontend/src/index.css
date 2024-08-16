@@ -9,3 +9,15 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
+.transition-animate {
+  transition-property: all;
+  transition-timing-function: ease-linear;
+  transition-duration: 200ms;
+}
+
+.transition-animate:hover {
+  transition-property: all;
+  transition-timing-function: ease-linear;
+  transition-duration: 200ms;
+}

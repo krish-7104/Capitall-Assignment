@@ -1,1 +1,1 @@
-export const BaseLink = import.meta.env.API_LINK
+export const BaseLink = import.meta.env.VITE_API_LINK
