@@ -4,8 +4,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 
 export const CreateProductHandler = async (req, res) => {
     try {
-        const { name, price, seller, image, location } = req.body;
-        const product = await Product.create({ name, price, seller, image, location });
+        const { title, description, price, seller, image, location } = req.body;
+        const product = await Product.create({ title, description, price, seller, image, location });
         res.status(201).json(new ApiResponse(201, product, "Product created successfully"));
     } catch (error) {
         res.status(500).json(new ApiResponse(500, null, error.message));
@@ -15,7 +15,17 @@ export const CreateProductHandler = async (req, res) => {
 export const GetProductHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await Product.findById(id).populate('seller').populate('buyer');
+        const product = await Product.findById(id)
+            .lean()
+            .populate({
+                path: 'seller',
+                select: '-password -purchases -createdAt -updatedAt',
+            })
+            .populate({
+                path: 'buyer',
+                select: '-password -purchases -createdAt -updatedAt',
+            })
+            .exec();
         if (!product) {
             return res.status(404).json(new ApiResponse(404, null, "Product not found"));
         }
@@ -28,10 +38,10 @@ export const GetProductHandler = async (req, res) => {
 export const UpdateProductHandler = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, price, status, buyer } = req.body;
+        const { title, description, price, seller, image, location, buyer } = req.body;
         const product = await Product.findByIdAndUpdate(
             id,
-            { name, price, status, buyer },
+            { title, description, price, seller, image, location, buyer },
             { new: true, runValidators: true }
         ).populate('seller').populate('buyer');
         if (!product) {
@@ -58,8 +68,19 @@ export const DeleteProductHandler = async (req, res) => {
 
 export const GetProductsHandler = async (req, res) => {
     try {
-        const products = await Product.find().populate('seller').populate('buyer');
-        res.status(200).json(new ApiResponse(200, products, "Products get successfully"));
+        const products = await Product.find()
+            .lean()
+            .populate({
+                path: 'seller',
+                select: '-password -purchases -createdAt -updatedAt',
+            })
+            .populate({
+                path: 'buyer',
+                select: '-password -purchases -createdAt -updatedAt',
+            })
+            .exec();
+
+        res.status(200).json(new ApiResponse(200, products, "Products retrieved successfully"));
     } catch (error) {
         res.status(500).json(new ApiResponse(500, null, error.message));
     }
