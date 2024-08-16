@@ -4,8 +4,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 
 export const CreateProductHandler = async (req, res) => {
     try {
-        const { name, price, seller } = req.body;
-        const product = await Product.create({ name, price, seller });
+        const { name, price, seller, image, location } = req.body;
+        const product = await Product.create({ name, price, seller, image, location });
         res.status(201).json(new ApiResponse(201, product, "Product created successfully"));
     } catch (error) {
         res.status(500).json(new ApiResponse(500, null, error.message));

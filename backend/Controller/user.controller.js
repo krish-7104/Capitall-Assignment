@@ -10,7 +10,7 @@ const generateToken = (user, expiry) => {
 };
 
 const generateResponse = (user) => {
-    return { _id: user._id, email: user.email, createdAt: user.createdAt, updatedAt: user.updatedAt }
+    return { _id: user._id, email: user.email, createdAt: user.createdAt, updatedAt: user.updatedAt, name: user.name }
 }
 
 export const RegisterHandler = async (req, res) => {
