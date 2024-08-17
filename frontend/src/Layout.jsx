@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import Navbar from "./shared/Navbar";
 import { UserContext } from "./context/UserContext";
 import Cookies from "js-cookie";
@@ -10,7 +10,7 @@ import { BaseLink } from "../utils/BaseApi";
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   useEffect(() => {
     const GetUser = async () => {
@@ -26,7 +26,18 @@ const Layout = () => {
         );
         setUser(resp.data.data);
       } catch (error) {
-        //
+        setUser(null);
+        if (
+          !location.pathname?.includes("/login") &&
+          !location.pathname?.includes("/register") &&
+          location.pathname !== "/" &&
+          !location.pathname?.includes("/forget-password") &&
+          !location.pathname?.includes("/verify-token")
+        ) {
+          navigate("/login");
+          toast.dismiss();
+          toast.error("Login First!");
+        }
       }
     };
 

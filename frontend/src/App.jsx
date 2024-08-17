@@ -8,6 +8,7 @@ import UpdatePassword from "./screens/Auth/UpdatePassword";
 import MyAccount from "./screens/MyAccount";
 import Product from "./screens/Product/Product";
 import SellProduct from "./screens/Product/SellProduct";
+import UpdateProduct from "./screens/Product/UpdateProduct";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -45,6 +46,10 @@ const App = () => {
         {
           path: "/sell-product",
           element: <SellProduct />,
+        },
+        {
+          path: "/update-product/:id",
+          element: <UpdateProduct />,
         },
       ],
     },

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import { BaseLink } from "../../../utils/BaseApi";
 import { UserContext } from "../../context/UserContext";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
-const SellProduct = () => {
+const UpdateProduct = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -21,9 +23,31 @@ const SellProduct = () => {
   });
   const [loading, setLoading] = useState(false);
   const [imageUploaded, setImageUploaded] = useState(false);
-  const { user } = useContext(UserContext);
 
   useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(
+          `${BaseLink}/product/get-product/${id}`
+        );
+        const product = response.data.data;
+
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          status: product.status,
+          imageUrl: product.image,
+          selectedState: product.location.state,
+          selectedCity: product.location.city,
+          postalCode: product.location.postalCode,
+        }));
+      } catch (error) {
+        console.error("Error fetching product", error);
+      }
+    };
+
     const fetchStates = async () => {
       try {
         const tokenResponse = await axios.get(
@@ -57,8 +81,9 @@ const SellProduct = () => {
       }
     };
 
+    fetchProduct();
     fetchStates();
-  }, []);
+  }, [id]);
 
   const handleStateChange = async (event) => {
     const state = event.target.value;
@@ -105,31 +130,34 @@ const SellProduct = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    toast.loading("Submitting your product...");
+    toast.loading("Updating your product...");
     try {
-      const response = await axios.post(`${BaseLink}/product/add-product`, {
-        title: formData.title,
-        description: formData.description,
-        price: formData.price,
-        status: formData.status,
-        image: formData.imageUrl,
-        location: {
-          city: formData.selectedCity,
-          state: formData.selectedState,
-          postalCode: formData.postalCode,
-        },
-        seller: user._id,
-      });
+      const response = await axios.put(
+        `${BaseLink}/product/update-product/${id}`,
+        {
+          title: formData.title,
+          description: formData.description,
+          price: formData.price,
+          status: formData.status,
+          image: formData.imageUrl,
+          location: {
+            city: formData.selectedCity,
+            state: formData.selectedState,
+            postalCode: formData.postalCode,
+          },
+          seller: user._id,
+        }
+      );
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.dismiss();
-        toast.success("Product created successfully!");
+        toast.success("Product updated successfully!");
         navigate("/");
       }
     } catch (error) {
       toast.dismiss();
-      toast.error("Error creating product");
-      console.error("Error creating product", error);
+      toast.error("Error updating product");
+      console.error("Error updating product", error);
     } finally {
       setLoading(false);
     }
@@ -168,7 +196,7 @@ const SellProduct = () => {
       <div className="w-full px-4 mt-14">
         <div className="mx-auto max-w-lg text-center">
           <h1 className="text-2xl font-semibold sm:text-3xl">
-            Sell Your Product
+            Update Your Product
           </h1>
         </div>
         <form
@@ -232,7 +260,6 @@ const SellProduct = () => {
               type="file"
               onChange={handleImageUpload}
               className="w-full rounded-lg border-gray-200 border focus:outline-violet-700 p-4 pe-12 text-sm shadow-sm"
-              required
             />
             {formData.imageUrl && (
               <div className="mt-4">
@@ -280,7 +307,6 @@ const SellProduct = () => {
               onChange={handleInputChange}
               className="w-full rounded-lg border-gray-200 border focus:outline-violet-700 p-4 pe-12 text-sm shadow-sm"
               required
-              disabled={!formData.selectedState}
             >
               <option value="" disabled>
                 Select city
@@ -293,7 +319,7 @@ const SellProduct = () => {
             </select>
           </div>
 
-          <div className="col-span-1 md:col-span-2">
+          <div>
             <label htmlFor="postalCode" className="sr-only">
               Postal Code
             </label>
@@ -307,6 +333,7 @@ const SellProduct = () => {
               required
             />
           </div>
+
           <div className="col-span-1 md:col-span-2">
             <button
               type="submit"
@@ -315,7 +342,7 @@ const SellProduct = () => {
               }`}
               disabled={!imageUploaded || loading}
             >
-              Submit Product
+              {loading ? "Updating..." : "Update Product"}
             </button>
           </div>
         </form>
@@ -324,4 +351,4 @@ const SellProduct = () => {
   );
 };
 
-export default SellProduct;
+export default UpdateProduct;
