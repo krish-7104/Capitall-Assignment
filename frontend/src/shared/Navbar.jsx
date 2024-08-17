@@ -8,7 +8,7 @@ const Navbar = () => {
   const location = useLocation();
   useEffect(() => {}, []);
   return (
-    <nav className="w-full bg-gray-100 shadow border-b select-none fixed top-0">
+    <nav className="w-full bg-gray-100 shadow border-b select-none fixed top-0 z-40">
       <section className="max-w-7xl py-3 px-6 flex justify-between items-center mx-auto">
         <Link to={"/"} className="flex justify-center items-center">
           <AiOutlineProduct className="text-violet-700 text-3xl" />{" "}

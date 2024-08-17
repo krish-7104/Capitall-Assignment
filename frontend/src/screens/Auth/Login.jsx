@@ -28,7 +28,7 @@ const Login = () => {
         setUser(data);
         toast.dismiss();
         toast.success(response.data.message);
-        // navigate("/");
+        navigate("/");
       }
     } catch (error) {
       toast.dismiss();
@@ -82,6 +82,7 @@ const Login = () => {
               />
             </div>
           </div>
+
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-500">
               No account?
@@ -95,6 +96,15 @@ const Login = () => {
             >
               Login
             </button>
+          </div>
+
+          <div className="mt-4 text-center">
+            <Link
+              to="/forget-password"
+              className="text-sm text-violet-700 underline"
+            >
+              Forget Password?
+            </Link>
           </div>
         </form>
       </div>

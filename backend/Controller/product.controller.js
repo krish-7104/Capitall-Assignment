@@ -87,7 +87,7 @@ export const GetProductsHandler = async (req, res) => {
         const { search } = req.query;
 
         const query = {
-            // status: "unsold",
+            status: "unsold",
         };
 
         if (search) {

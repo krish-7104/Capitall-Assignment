@@ -13,7 +13,7 @@ export const sendMail = async (to, token) => {
         from: `OLX Capitall <${process.env.NODEMAILER_USER}>`,
         to,
         subject: 'Password Reset',
-        text: `Reset your password by clicking on the following link: ${process.env.FRONTEND_LINK}/verify-token?token=${token}`,
+        text: `Reset your password by clicking on the following link: ${process.env.FRONTEND_LINK}/verify-token/${token}`,
     };
 
     await transporter.sendMail(mailOptions);
