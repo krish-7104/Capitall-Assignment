@@ -17,7 +17,11 @@ const UserSchema = new Schema({
     },
     purchases: [{
         type: Schema.Types.ObjectId,
-        ref: 'Item',
+        ref: 'Product',
+    }],
+    listedProduct: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
     }],
 }, { timestamps: true });
 
@@ -31,6 +35,6 @@ UserSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 export default User;

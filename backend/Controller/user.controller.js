@@ -1,9 +1,9 @@
-import User from "../models/user.model.js";
 import ResetToken from "../models/reset.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import ApiResponse from "../utils/ApiResponse.js";
 import { sendMail } from "../utils/MailHelper.js";
+import User from "../Models/user.model.js";
 
 const generateToken = (user, expiry) => {
     return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: expiry });
@@ -13,6 +13,44 @@ const generateResponse = (user) => {
     return { _id: user._id, email: user.email, createdAt: user.createdAt, updatedAt: user.updatedAt, name: user.name }
 }
 
+export const GetUserAccountDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id)
+            .populate({
+                path: 'listedProduct',
+                select: '-__v',
+                populate: {
+                    path: 'seller',
+                    select: '-password -purchases -createdAt -updatedAt'
+                }
+            })
+            .populate({
+                path: 'purchases',
+                select: '-__v',
+                populate: {
+                    path: 'seller',
+                    select: '-password -purchases -createdAt -updatedAt'
+                }
+            })
+            .exec();
+
+        if (!user) {
+            return res.status(404).json(new ApiResponse(404, null, "User not found"));
+        }
+
+        const userDetails = {
+            name: user.name,
+            email: user.email,
+            listedProducts: user.listedProduct,
+            purchasedProducts: user.purchases
+        };
+
+        res.status(200).json(new ApiResponse(200, userDetails, "User account details retrieved successfully"));
+    } catch (error) {
+        res.status(500).json(new ApiResponse(500, null, error.message));
+    }
+};
 export const RegisterHandler = async (req, res) => {
     try {
         const { name, email, password } = req.body

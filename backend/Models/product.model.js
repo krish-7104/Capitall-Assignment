@@ -35,7 +35,16 @@ const ProductSchema = new Schema({
     },
     location: {
         type: Object,
-        required: true
+        required: true,
+        properties: {
+            city: { type: String, required: true },
+            state: { type: String, required: true },
+            postalCode: { type: String, required: true },
+        },
+    },
+    soldAt: {
+        type: Date,
+        default: null,
     }
 }, { timestamps: true });
 
