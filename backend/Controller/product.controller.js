@@ -84,7 +84,21 @@ export const DeleteProductHandler = async (req, res) => {
 
 export const GetProductsHandler = async (req, res) => {
     try {
-        const products = await Product.find({ status: "unsold" }).sort({ updatedAt: -1 })
+        const { search } = req.query;
+
+        const query = {
+            // status: "unsold",
+        };
+
+        if (search) {
+            query.$or = [
+                { title: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        const products = await Product.find(query)
+            .sort({ updatedAt: -1 })
             .lean()
             .populate({
                 path: 'seller',
