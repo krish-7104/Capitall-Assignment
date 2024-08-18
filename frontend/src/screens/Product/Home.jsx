@@ -54,7 +54,7 @@ const Home = () => {
       {loading ? (
         <Loader />
       ) : products.length > 0 ? (
-        <section className="grid grid-cols-3 gap-6 w-full mt-5">
+        <section className="grid grid-cols-3 gap-6 w-full mt-5 pb-10">
           {products.map((item) => (
             <ProductCard
               key={item._id}
