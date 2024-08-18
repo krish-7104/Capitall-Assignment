@@ -3,7 +3,6 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import Navbar from "./shared/Navbar";
 import { UserContext } from "./context/UserContext";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { BaseLink } from "../utils/BaseApi";
 
@@ -15,7 +14,7 @@ const Layout = () => {
   useEffect(() => {
     const GetUser = async () => {
       try {
-        const token = Cookies.get("token");
+        const token = localStorage.getItem("token"); // Changed from Cookies to localStorage
         if (!token) {
           throw new Error("No token found");
         }

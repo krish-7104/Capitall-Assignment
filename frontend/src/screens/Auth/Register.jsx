@@ -20,13 +20,11 @@ const Register = () => {
     e.preventDefault();
     toast.loading("Processing...");
     try {
-      const response = await axios.post(`${BaseLink}/auth/register`, data, {
-        withCredentials: true,
-      });
+      const response = await axios.post(`${BaseLink}/auth/register`, data);
       if (response.data.success) {
         toast.dismiss();
         toast.success(response.data.message);
-        navigate("/");
+        navigate("/login");
       }
     } catch (error) {
       toast.dismiss();

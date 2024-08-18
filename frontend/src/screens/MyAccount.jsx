@@ -19,11 +19,9 @@ const MyAccount = () => {
         const response = await axios.get(
           `${BaseLink}/auth/user-details/${user?._id}`
         );
-        console.log(response);
         if (response.data.success) {
           const { name, email, listedProducts, purchasedProducts } =
             response.data.data;
-          console.log(response.data.data);
           setUserDetails({ name, email });
           setListedProducts(listedProducts);
           setPurchasedProducts(purchasedProducts);

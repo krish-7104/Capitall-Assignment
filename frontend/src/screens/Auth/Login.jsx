@@ -21,11 +21,11 @@ const Login = () => {
     e.preventDefault();
     toast.loading("Processing...");
     try {
-      const response = await axios.post(`${BaseLink}/auth/login`, data, {
-        withCredentials: true,
-      });
+      const response = await axios.post(`${BaseLink}/auth/login`, data);
       if (response.data.success) {
-        setUser(data);
+        const { token } = response.data.data;
+        localStorage.setItem("token", token);
+        setUser(response.data.data.user);
         toast.dismiss();
         toast.success(response.data.message);
         navigate("/");
