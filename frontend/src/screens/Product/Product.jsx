@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BaseLink } from "../../../utils/BaseApi";
 import { UserContext } from "../../context/UserContext";
 import toast from "react-hot-toast";
@@ -12,7 +12,7 @@ const Product = () => {
   const productId = location.pathname.replace("/product/", "");
   const [product, setProduct] = useState();
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const GetProduct = async () => {
       try {
@@ -43,6 +43,7 @@ const Product = () => {
       if (response.data.success) {
         toast.dismiss();
         toast.success(response.data.message);
+        navigate("/myaccount");
       }
     } catch (error) {
       toast.dismiss();
