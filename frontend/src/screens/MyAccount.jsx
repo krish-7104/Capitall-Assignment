@@ -5,13 +5,13 @@ import { UserContext } from "../context/UserContext";
 import { BaseLink } from "../../utils/BaseApi";
 import ListedCard from "../components/ListedCard";
 import PurchasedCard from "../components/PurchaseCard";
-import Loader from "../components/Loader"; // Import the Loader component
+import Loader from "../components/Loader";
 
 const MyAccount = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [listedProducts, setListedProducts] = useState([]);
   const [purchasedProducts, setPurchasedProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -31,35 +31,29 @@ const MyAccount = () => {
       } catch (error) {
         console.error("Error fetching user details:", error);
       } finally {
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false);
       }
     };
 
     if (user?._id) {
       getUser();
     } else {
-      setLoading(false); // Set loading to false if there's no user
+      setLoading(false);
     }
   }, [user?._id]);
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post(
-        `${BaseLink}/auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
       setUser(null);
       navigate("/login");
+      localStorage.clear();
     } catch (error) {
       console.error("Error logging out:", error);
     }
   };
 
   if (loading) {
-    return <Loader />; // Display loader while loading
+    return <Loader />;
   }
 
   return (
