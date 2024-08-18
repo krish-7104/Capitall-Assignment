@@ -12,6 +12,7 @@ const Product = () => {
   const productId = location.pathname.replace("/product/", "");
   const [product, setProduct] = useState();
   const [loading, setLoading] = useState(true);
+  const [alreadySold, setAlreadySold] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     const GetProduct = async () => {
@@ -20,6 +21,7 @@ const Product = () => {
           `${BaseLink}/product/get-product/${productId}`
         );
         if (response.data.success) {
+          if (response.data.data.status === "sold") setAlreadySold(true);
           setProduct(response.data.data);
         }
       } catch (error) {
@@ -115,7 +117,7 @@ const Product = () => {
                   )}
                 </div>
               </div>
-              {product.seller._id !== user?._id && (
+              {product.seller._id !== user?._id && !alreadySold && (
                 <button
                   className="mt-4 w-[90%] mx-auto bg-violet-700 block text-white p-3 rounded-full shadow-md shadow-violet-400"
                   onClick={buyProductHandler}
