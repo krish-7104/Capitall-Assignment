@@ -1,10 +1,10 @@
-import mongoose, { Schema } from "mongoose"
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const ResetSchema = new Schema({
     token: {
         type: String,
     },
+}, { timestamps: true });
 
-}, { timestamps: true })
-
-export default mongoose.model("Reset Token", ResetSchema)
+module.exports = mongoose.model("Reset Token", ResetSchema);

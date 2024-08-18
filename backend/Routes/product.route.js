@@ -1,12 +1,12 @@
-import express from 'express';
-import {
+const express = require('express');
+const {
     CreateProductHandler,
     GetProductHandler,
     UpdateProductHandler,
     DeleteProductHandler,
     GetProductsHandler,
     BuyProductHandler
-} from '../Controller/product.controller.js';
+} = require('../Controller/product.controller.js');
 
 const router = express.Router();
 
@@ -18,4 +18,4 @@ router.delete('/delete-product/:id', DeleteProductHandler);
 
 router.post('/buy-product/:id', BuyProductHandler);
 
-export default router;
+module.exports = router;

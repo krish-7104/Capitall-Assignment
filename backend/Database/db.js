@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const databaseName = 'olx-capitall';
 
@@ -12,4 +12,4 @@ const connectToMongo = async () => {
     }
 };
 
-export default connectToMongo;
+module.exports = connectToMongo;

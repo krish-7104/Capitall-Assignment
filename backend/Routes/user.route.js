@@ -1,5 +1,13 @@
-import express from 'express';
-import { ForgetPasswordHandler, GetUserAccountDetails, GetUserHandler, LoginHandler, LogoutHandler, RegisterHandler, UpdatePasswordHandler } from '../Controller/user.controller.js';
+const express = require('express');
+const {
+    ForgetPasswordHandler,
+    GetUserAccountDetails,
+    GetUserHandler,
+    LoginHandler,
+    LogoutHandler,
+    RegisterHandler,
+    UpdatePasswordHandler
+} = require('../Controller/user.controller.js');
 
 const router = express.Router();
 
@@ -12,4 +20,4 @@ router.post('/logout', LogoutHandler);
 
 router.get('/user-details/:id', GetUserAccountDetails);
 
-export default router;
+module.exports = router;

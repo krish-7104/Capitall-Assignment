@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Assignment Captitall Backend OLX",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"

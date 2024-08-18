@@ -1,8 +1,8 @@
-import Product from "../Models/product.model.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import User from "../Models/user.model.js"
+const Product = require("../Models/product.model.js");
+const ApiResponse = require("../utils/ApiResponse.js");
+const User = require("../Models/user.model.js");
 
-export const CreateProductHandler = async (req, res) => {
+const CreateProductHandler = async (req, res) => {
     try {
         const { title, description, price, seller, image, location } = req.body;
 
@@ -20,7 +20,7 @@ export const CreateProductHandler = async (req, res) => {
     }
 };
 
-export const GetProductHandler = async (req, res) => {
+const GetProductHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const product = await Product.findById(id)
@@ -43,7 +43,7 @@ export const GetProductHandler = async (req, res) => {
     }
 };
 
-export const UpdateProductHandler = async (req, res) => {
+const UpdateProductHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, description, price, seller, image, location, buyer, status, soldAt } = req.body;
@@ -69,7 +69,7 @@ export const UpdateProductHandler = async (req, res) => {
     }
 };
 
-export const DeleteProductHandler = async (req, res) => {
+const DeleteProductHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const product = await Product.findByIdAndDelete(id);
@@ -82,7 +82,7 @@ export const DeleteProductHandler = async (req, res) => {
     }
 };
 
-export const GetProductsHandler = async (req, res) => {
+const GetProductsHandler = async (req, res) => {
     try {
         const { search } = req.query;
 
@@ -116,8 +116,7 @@ export const GetProductsHandler = async (req, res) => {
     }
 };
 
-
-export const BuyProductHandler = async (req, res) => {
+const BuyProductHandler = async (req, res) => {
     try {
         const { id } = req.params;
         const { userId } = req.body;
@@ -154,4 +153,13 @@ export const BuyProductHandler = async (req, res) => {
     } catch (error) {
         res.status(500).json(new ApiResponse(500, null, error.message));
     }
+};
+
+module.exports = {
+    CreateProductHandler,
+    GetProductHandler,
+    UpdateProductHandler,
+    DeleteProductHandler,
+    GetProductsHandler,
+    BuyProductHandler
 };

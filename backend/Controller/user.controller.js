@@ -1,19 +1,19 @@
-import ResetToken from "../models/reset.model.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import ApiResponse from "../utils/ApiResponse.js";
-import { sendMail } from "../utils/MailHelper.js";
-import User from "../Models/user.model.js";
+const ResetToken = require("../models/reset.model.js");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const ApiResponse = require("../utils/ApiResponse.js");
+const { sendMail } = require("../utils/MailHelper.js");
+const User = require("../Models/user.model.js");
 
 const generateToken = (user, expiry) => {
     return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: expiry });
 };
 
 const generateResponse = (user) => {
-    return { _id: user._id, email: user.email, createdAt: user.createdAt, updatedAt: user.updatedAt, name: user.name }
-}
+    return { _id: user._id, email: user.email, createdAt: user.createdAt, updatedAt: user.updatedAt, name: user.name };
+};
 
-export const GetUserAccountDetails = async (req, res) => {
+const GetUserAccountDetails = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await User.findById(id)
@@ -51,13 +51,14 @@ export const GetUserAccountDetails = async (req, res) => {
         res.status(500).json(new ApiResponse(500, null, error.message));
     }
 };
-export const RegisterHandler = async (req, res) => {
+
+const RegisterHandler = async (req, res) => {
     try {
-        const { name, email, password } = req.body
-        let user = await User.findOne({ email })
+        const { name, email, password } = req.body;
+        let user = await User.findOne({ email });
         if (user) {
             res.status(409).json(new ApiResponse(409, null, "User Already Exists"));
-            return
+            return;
         } else {
             user = await User.create({ name, email, password });
             const token = generateToken(user, "7d");
@@ -65,14 +66,15 @@ export const RegisterHandler = async (req, res) => {
             res.cookie('token', token, {
                 httpOnly: false, secure: true,
                 sameSite: 'None', maxAge: 7 * 24 * 60 * 60 * 1000
-            }); res.status(201).json(new ApiResponse(201, response, "User registered successfully"));
+            });
+            res.status(201).json(new ApiResponse(201, response, "User registered successfully"));
         }
     } catch (error) {
         res.status(500).json(new ApiResponse(500, null, error.message));
     }
 };
 
-export const LoginHandler = async (req, res) => {
+const LoginHandler = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
@@ -91,7 +93,7 @@ export const LoginHandler = async (req, res) => {
     }
 };
 
-export const GetUserHandler = async (req, res) => {
+const GetUserHandler = async (req, res) => {
     try {
         const authorizationHeader = req.headers.authorization;
         if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
@@ -115,7 +117,7 @@ export const GetUserHandler = async (req, res) => {
     }
 };
 
-export const ForgetPasswordHandler = async (req, res) => {
+const ForgetPasswordHandler = async (req, res) => {
     const { email } = req.body;
     try {
         const user = await User.findOne({ email });
@@ -133,7 +135,7 @@ export const ForgetPasswordHandler = async (req, res) => {
     }
 };
 
-export const UpdatePasswordHandler = async (req, res) => {
+const UpdatePasswordHandler = async (req, res) => {
     const { token, password } = req.body;
     try {
         if (!token) {
@@ -159,8 +161,17 @@ export const UpdatePasswordHandler = async (req, res) => {
     }
 };
 
-
-export const LogoutHandler = (req, res) => {
+const LogoutHandler = (req, res) => {
     res.cookie('token', '', { httpOnly: false, maxAge: 0 });
     return res.status(200).json(new ApiResponse(200, null, "Logout successful"));
+};
+
+module.exports = {
+    GetUserAccountDetails,
+    RegisterHandler,
+    LoginHandler,
+    GetUserHandler,
+    ForgetPasswordHandler,
+    UpdatePasswordHandler,
+    LogoutHandler,
 };
