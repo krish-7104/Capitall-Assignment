@@ -11,8 +11,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-app.use(cors({ origin: [process.env.FRONTEND_LINK], credentials: true }));
+app.use(cors({ origin: [process.env.FRONTEND_LINK, "http://localhost:5173"], credentials: true }));
 connectToMongo();
+
+app.get("/", (req, res) => {
+    res.send("Hello, I am working fine! 🚀")
+})
 
 app.use('/api/auth', userRoutes);
 app.use('/api/product', productRoutes);
