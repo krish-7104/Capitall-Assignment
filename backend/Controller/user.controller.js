@@ -1,4 +1,4 @@
-const ResetToken = require("../models/reset.model.js");
+const ResetToken = require("../Models/reset.model.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const ApiResponse = require("../utils/ApiResponse.js");
