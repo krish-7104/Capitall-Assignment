@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import { BaseLink } from "../../../utils/BaseApi";
 import ProductCard from "../../components/ProductCard";
 import { FaSearch } from "react-icons/fa"; // Import search icon
+import Loader from "../../components/Loader";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const [loading, setLoading] = useState(false); // State to track loading
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -21,6 +23,7 @@ const Home = () => {
 
   useEffect(() => {
     const GetAllProducts = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           `${BaseLink}/product/all-products?search=${debouncedSearchQuery}`
@@ -29,7 +32,9 @@ const Home = () => {
           setProducts(response.data.data);
         }
       } catch (error) {
-        //
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
     };
     GetAllProducts();
@@ -46,7 +51,9 @@ const Home = () => {
           className="w-full py-3 px-4 rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
-      {products.length > 0 ? (
+      {loading ? (
+        <Loader />
+      ) : products.length > 0 ? (
         <section className="grid grid-cols-3 gap-6 w-full mt-5">
           {products.map((item) => (
             <ProductCard

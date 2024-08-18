@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { BaseLink } from "../../../utils/BaseApi";
 import { UserContext } from "../../context/UserContext";
+import Loader from "../../components/Loader";
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -43,12 +44,14 @@ const UpdateProduct = () => {
           selectedCity: product.location.city,
           postalCode: product.location.postalCode,
         }));
+
+        fetchStates(product.location.state);
       } catch (error) {
         console.error("Error fetching product", error);
       }
     };
 
-    const fetchStates = async () => {
+    const fetchStates = async (selectedState) => {
       try {
         const tokenResponse = await axios.get(
           "https://www.universal-tutorial.com/api/getaccesstoken",
@@ -76,30 +79,33 @@ const UpdateProduct = () => {
           ...prevFormData,
           states: statesResponse.data,
         }));
+
+        if (selectedState) {
+          fetchCities(selectedState);
+        }
       } catch (error) {
         console.error("Error fetching states", error);
       }
     };
 
     fetchProduct();
-    fetchStates();
   }, [id]);
 
-  const handleStateChange = async (event) => {
-    const state = event.target.value;
-    const tokenResponse = await axios.get(
-      "https://www.universal-tutorial.com/api/getaccesstoken",
-      {
-        headers: {
-          "api-token": import.meta.env.VITE_STATE_API_TOKEN,
-          "user-email": import.meta.env.VITE_STATE_API_EMAIL,
-        },
-      }
-    );
-
-    const token = tokenResponse.data.auth_token;
+  const fetchCities = async (state) => {
     try {
-      const response = await axios.get(
+      const tokenResponse = await axios.get(
+        "https://www.universal-tutorial.com/api/getaccesstoken",
+        {
+          headers: {
+            "api-token": import.meta.env.VITE_STATE_API_TOKEN,
+            "user-email": import.meta.env.VITE_STATE_API_EMAIL,
+          },
+        }
+      );
+
+      const token = tokenResponse.data.auth_token;
+
+      const citiesResponse = await axios.get(
         `https://www.universal-tutorial.com/api/cities/${state}`,
         {
           headers: {
@@ -108,14 +114,25 @@ const UpdateProduct = () => {
           },
         }
       );
+
       setFormData((prevFormData) => ({
         ...prevFormData,
-        selectedState: state,
-        cities: response.data,
-        selectedCity: "",
+        cities: citiesResponse.data,
       }));
     } catch (error) {
       console.error("Error fetching cities", error);
+    }
+  };
+
+  const handleStateChange = async (event) => {
+    const state = event.target.value;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      selectedState: state,
+    }));
+
+    if (state) {
+      await fetchCities(state);
     }
   };
 
@@ -190,6 +207,10 @@ const UpdateProduct = () => {
       console.error("Error uploading image to Cloudinary", error);
     }
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <section className="flex flex-col mx-auto justify-center items-center py-10 w-full bg-white">
@@ -337,10 +358,7 @@ const UpdateProduct = () => {
           <div className="col-span-1 md:col-span-2">
             <button
               type="submit"
-              className={`w-full rounded-lg bg-violet-600 px-5 py-3 text-base font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 ${
-                !imageUploaded ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={!imageUploaded || loading}
+              className={`w-full rounded-lg bg-violet-600 px-5 py-3 text-base font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2`}
             >
               {loading ? "Updating..." : "Update Product"}
             </button>

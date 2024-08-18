@@ -5,11 +5,13 @@ import { UserContext } from "../context/UserContext";
 import { BaseLink } from "../../utils/BaseApi";
 import ListedCard from "../components/ListedCard";
 import PurchasedCard from "../components/PurchaseCard";
+import Loader from "../components/Loader"; // Import the Loader component
 
 const MyAccount = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [listedProducts, setListedProducts] = useState([]);
   const [purchasedProducts, setPurchasedProducts] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -28,11 +30,15 @@ const MyAccount = () => {
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
 
     if (user?._id) {
       getUser();
+    } else {
+      setLoading(false); // Set loading to false if there's no user
     }
   }, [user?._id]);
 
@@ -51,6 +57,10 @@ const MyAccount = () => {
       console.error("Error logging out:", error);
     }
   };
+
+  if (loading) {
+    return <Loader />; // Display loader while loading
+  }
 
   return (
     <section className="w-full max-w-6xl mx-auto mt-20 mb-10">
